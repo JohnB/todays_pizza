@@ -43,7 +43,9 @@ defmodule TodaysPizza.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:floki, "~> 0.26.0"},
-      {:httpoison, "~> 1.6"}
+      {:httpoison, "~> 1.6"},
+      {:oauther, "~> 1.1"},
+      {:extwitter, "~> 0.12"}
     ]
   end
 
