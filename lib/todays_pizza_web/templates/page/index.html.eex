@@ -11,4 +11,4 @@
     <b><%= date %></b>:
     <span><%= topping %></span>:
   </p>
-<%= end %>
+<% end %>
