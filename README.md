@@ -30,8 +30,11 @@ I'd like to resurrect it to be an elixir bot using the new JohnB/todays_pizza re
 ## Replacement Process
 - [x] tell Heroku to use the newer stack
 - [x] add it as a remote to the JohnB/todays_pizza client (and in heroku UI?)
-- [ ] attempt _any_ deployment, even if it is not reachable
-- [ ] make the code changes needed for successfule deployment
+- [x] attempt _any_ deployment, even if it is not reachable
+- [x] make the code changes needed for successfule deployment 
+      (mostly adding a `Procfile` containing 
+      `web: mix phx.server`)
+- [x] verify the static ("TEST DATA") homepage works correctly
 - [ ] verify the homepage works correctly
 - [ ] set twitter env vars in heroku
 - [ ] add a tweet button (hidden mayber?)
