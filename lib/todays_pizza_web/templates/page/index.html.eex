@@ -1,7 +1,7 @@
 <h1>Daily Pizza Flavors</h1>
 <p>
   These should match
-  <a href="<%= TodaysPizzaWeb.PageController.cheeseboard_url() %>">
+  <a href="<%= TodaysPizza.cheeseboard_url() %>">
     the Cheese Board page
   </a>
   .

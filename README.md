@@ -35,9 +35,9 @@ I'd like to resurrect it to be an elixir bot using the new JohnB/todays_pizza re
       (mostly adding a `Procfile` containing 
       `web: mix phx.server`)
 - [x] verify the static ("TEST DATA") homepage works correctly
-- [ ] verify the homepage works correctly
-- [ ] set twitter env vars in heroku
-- [ ] add a tweet button (hidden mayber?)
+- [x] verify the homepage works correctly
+- [x] set twitter env vars in heroku
+- [ ] add a tweet button (hidden maybe?)
 - [ ] refactor so it can be used from cron
 - [ ] add the cron job
 

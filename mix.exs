@@ -45,7 +45,8 @@ defmodule TodaysPizza.MixProject do
       {:floki, "~> 0.26.0"},
       {:httpoison, "~> 1.6"},
       {:oauther, "~> 1.1"},
-      {:extwitter, "~> 0.12"}
+      {:extwitter, "~> 0.12"},
+      {:timex, "~> 3.6"}
     ]
   end
 
