@@ -7,10 +7,11 @@
 </p>
 <p>
   They will be
-  tweet<a href="/send_pizza_message">e</a>d
-  ed once a day by
+  tweet<a href="/send_pizza_message"
+          onclick="return confirm('Are you sure you want to post to twitter?')">e</a>d
+  once a day by
   <a href="https://twitter.com/todays_pizza">
-    the bot
+    the bot (at 9:30am PDT)
   </a>
 </p>
 <%= for [date, topping] <- @dates_and_toppings do %>
