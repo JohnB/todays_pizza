@@ -37,8 +37,8 @@ I'd like to resurrect it to be an elixir bot using the new JohnB/todays_pizza re
 - [x] verify the static ("TEST DATA") homepage works correctly
 - [x] verify the homepage works correctly
 - [x] set twitter env vars in heroku
-- [ ] add a tweet button (hidden maybe?)
-- [ ] refactor so it can be used from cron
+- [x] refactor so it can be used from cron
+- [x] add a tweet button (hidden maybe?)
 - [ ] add the cron job
 
 ## Notes added on top of 'heroku info' results

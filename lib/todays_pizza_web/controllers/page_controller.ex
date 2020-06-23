@@ -3,11 +3,13 @@ defmodule TodaysPizzaWeb.PageController do
 
   def index(conn, _params) do
     dates_and_toppings = TodaysPizza.fetch_dates_and_topping
-
-    # static data option for debugging
-    #    dates_and_toppings = @example_data_20200621
-
     render(conn, "index.html", %{dates_and_toppings: dates_and_toppings})
+  end
+
+  def send_pizza_message(conn, params) do
+    TodaysPizza.tweet_about_pizza
+    put_flash(conn, :info, "Pizza tweet sent.")
+    |> index(params)
   end
 end
 

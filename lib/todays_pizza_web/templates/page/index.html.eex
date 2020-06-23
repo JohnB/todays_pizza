@@ -4,11 +4,18 @@
   <a href="<%= TodaysPizza.cheeseboard_url() %>">
     the Cheese Board page
   </a>
-  .
+</p>
+<p>
+  They will be
+  tweet<a href="/send_pizza_message">e</a>d
+  ed once a day by
+  <a href="https://twitter.com/todays_pizza">
+    the bot
+  </a>
 </p>
 <%= for [date, topping] <- @dates_and_toppings do %>
   <p>
     <b><%= date %></b>:
-    <span><%= topping %></span>:
+    <span><%= topping %></span>
   </p>
 <% end %>

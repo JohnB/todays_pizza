@@ -17,6 +17,7 @@ defmodule TodaysPizzaWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/send_pizza_message", PageController, :send_pizza_message
   end
 
   # Other scopes may use custom stacks.
