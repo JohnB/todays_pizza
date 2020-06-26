@@ -10,6 +10,6 @@ defmodule TodaysPizzaWeb.PageController do
     TodaysPizza.tweet_about_pizza()
 
     put_flash(conn, :info, "Pizza tweet sent.")
-    |> index(params)
+    |> redirect(external: "/")
   end
 end
