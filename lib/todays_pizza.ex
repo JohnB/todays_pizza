@@ -26,14 +26,17 @@ defmodule TodaysPizza do
     # NOTE: `h Timex.Format.DateTime.Formatters.Strftime` shows the format codes.
     # Try to match "Fri Jun 27" that we see from the cheeseboard site.
     # The name means: dow=DayOfWeek, mon=Month, day=DayOfMonth
-    dow_mon_day = Timex.format!(Timex.now(), "%a %b %d", :strftime)
+    dow_mon_day = Timex.format!(Timex.now("PST"), "%a %b %d", :strftime)
 
     todays_pizza =
       fetch_dates_and_topping()
-      |> Enum.find(fn [date, _message] -> date = dow_mon_day end)
+      |> Enum.find(fn [date, _message] ->
+        IO.inspect([date, _message])
+        date == dow_mon_day
+      end)
 
     case todays_pizza do
-      nil -> "#{dow_mon_day}: Calamity! No pizza today."
+      nil -> "#{dow_mon_day}: So very sad. No pizza today."
       [_, message] -> "#{dow_mon_day}: #{message}#{@message_from_the_collective}"
       _ -> "d @JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
     end
