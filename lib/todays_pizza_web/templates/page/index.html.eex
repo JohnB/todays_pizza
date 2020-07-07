@@ -6,6 +6,9 @@
   </a>
 </p>
 <p>
+  TODAY: <b><%= TodaysPizza.pizza_message() %></b>
+</p>
+<p>
   They will be tweeted once a day by
   <a href="https://twitter.com/todays_pizza">
     the bot (at 9:30am PDT)
