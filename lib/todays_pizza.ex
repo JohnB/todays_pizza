@@ -27,11 +27,8 @@ defmodule TodaysPizza do
     # Try to match "Fri Jun 27" that we see from the cheeseboard site.
     # The name means: dow=DayOfWeek, mon=Month, day=DayOfMonth
     # Note: the timex formatting allows for "08" or " 8" but not just "8".
-    dow_mon_day = Timex.format!(
-      Timex.now("PST"),
-      "%a %b #{Timex.today.day}",
-      :strftime
-    )
+    now = Timex.now("PST")
+    dow_mon_day = Timex.format!(now, "%a %b #{now.day}", :strftime)
 
     todays_pizza =
       fetch_dates_and_topping()
