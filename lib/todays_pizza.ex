@@ -64,6 +64,21 @@ defmodule TodaysPizza do
     "https://cheeseboardcollective.coop/pizza/"
   end
 
+  # Pizza entries may be a garbled mass of HTML
+  # so use this to pull out what we want.
+  def only_pizza("***" <> _junk) do
+    ""
+  end
+  def only_pizza("" <> topping) do
+    topping
+  end
+  def only_pizza({_tag, _junk, ["" <> topping]}) do
+    topping
+  end
+  def only_pizza({_tag, _junk, []}) do
+    ""
+  end
+
   # NOTE: This function will break when they next change the site.
   # Not much we can do about it until it happens.
   def extract_dates_and_toppings([date, pizza]) do
@@ -76,15 +91,22 @@ defmodule TodaysPizza do
     #    [
     #      "***This week we are offering partially baked pizzas to finish cooking at home. There are limited vegan, gluten-free friendly, and vegan+gluten-free friendly pizzas available also***",
     #      {"br", [], []},
-    #      {"br", [], []},
+    #      "some text"
+    #      {"b", [], ["bold text"]},
     #      " Artichoke, kalamata olive, fresh ricotta made in Berkeley by Belfiore, mozzarella cheese, and house made tomato sauce"
     #    ]
     #  }
     # ]
     # => ["Wed Jun 24", "Artichoke, kalamata olive, ..."]
     [
-      elem(date, 2) |> List.last() |> String.trim(),
-      elem(pizza, 2) |> List.last() |> String.trim()
+      elem(date, 2)
+      |> List.last()
+      |> String.trim(),
+
+      elem(pizza, 2)
+      |> Enum.map(&only_pizza(&1))
+      |> List.flatten
+      |> Enum.join("")
     ]
   end
 
