@@ -78,6 +78,9 @@ defmodule TodaysPizza do
   def only_pizza({_tag, _junk, []}) do
     ""
   end
+  def only_pizza({_tag, _junk, [not_junk]}) do
+    only_pizza(not_junk)
+  end
 
   # NOTE: This function will break when they next change the site.
   # Not much we can do about it until it happens.
