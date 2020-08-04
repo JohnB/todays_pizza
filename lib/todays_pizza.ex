@@ -11,6 +11,10 @@ defmodule TodaysPizza do
   # boilerplate
   @message_from_the_collective "\n(partially baked pizza to finish cooking at home)"
 
+  # This function is called by the Heroky scheduler (sorta cron).
+  # Set this value in the Heroku scheduler UI
+  #   mix run -e 'IO.puts TodaysPizza.tweet_about_pizza'
+  #
   def tweet_about_pizza do
     ExTwitter.configure(
       consumer_key: System.get_env("consumer_key"),
@@ -44,17 +48,33 @@ defmodule TodaysPizza do
     end
   end
 
+  # TODO: update the return signature to include salad somehow
+  # and then restore the salad tweets.
+  
   def fetch_dates_and_topping do
-    html = HTTPoison.get!(cheeseboard_url()).body
+    html = HTTPoison.get!(
+      "https://cheeseboardcollective.coop/pizza/"
+    ).body
     {:ok, document} = Floki.parse_document(html)
 
-    pizza_days =
-      Floki.find(document, ".pizza-list")
-      |> Floki.find("article")
-      |> Floki.find("p")
+    pizza_articles = Floki.find(document, ".pizza-list") |>
+      Floki.find("article")
 
-    Enum.chunk_every(pizza_days, 2, 2)
-    |> Enum.map(&extract_dates_and_toppings(&1))
+    pizza_article = List.first(pizza_articles)
+    Enum.map(pizza_articles, fn pizza_article ->
+      date = Floki.find(pizza_article, "div.date") |> Floki.text()
+      menu = Floki.find(pizza_article, "div.menu")
+      titles = Floki.find(menu, "h3")
+      topping_and_salad = Floki.find(menu, "p")
+      topping = topping_and_salad |> List.first |> Floki.text
+      #salad = topping_and_salad |> List.first |> Floki.text
+
+      [
+        date,
+        topping,
+        #salad,
+      ]
+    end)
 
     # For offline debugging, comment above and uncomment below.
     # @example_data_20200621
