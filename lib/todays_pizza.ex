@@ -7,11 +7,12 @@ defmodule TodaysPizza do
   if it comes from the database, an external API or others.
   """
 
-  # Since the followers all know the drill, just cut to the chase for whatever
-  # boilerplate
-  @message_from_the_collective "\n(partially baked pizza to finish cooking at home)"
+  # Since the followers all know the drill, just
+  # cut to the chase for whatever boilerplate.
+  @partial_bake ~r/\*\*\*We will have partially baked pizzas available at the bakery from/
+  @full_bake ~r/Hot whole and half pizza \(no slices yet\), will be available at the pizzeria from/
 
-  # This function is called by the Heroky scheduler (sorta cron).
+  # This function is called by the Heroku scheduler (sorta cron).
   # Set this value in the Heroku scheduler UI
   #   mix run -e 'IO.puts TodaysPizza.tweet_about_pizza'
   #
@@ -23,7 +24,13 @@ defmodule TodaysPizza do
       access_token_secret: System.get_env("oauth_token_secret")
     )
 
-    ExTwitter.update(pizza_message())
+    try do
+      ExTwitter.update(pizza_message())
+    catch
+      err -> ExTwitter.update("d @JohnB caught #{err}.")
+    rescue
+      _ -> ExTwitter.update("d @JohnB - something broke and needed rescuing.")
+    end
   end
 
   def pizza_message do
@@ -43,14 +50,22 @@ defmodule TodaysPizza do
 
     case todays_pizza do
       nil -> "#{dow_mon_day}: So very sad. No pizza today."
-      [_, message] -> "#{dow_mon_day}: #{message}#{@message_from_the_collective}"
+      [_, message] -> "#{dow_mon_day}: #{trimmed_message(message)}"
       _ -> "d @JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
     end
   end
 
+  def trimmed_message(message) do
+    message = Regex.replace(@partial_bake, message, "Partially baked:")
+    message = Regex.replace(@full_bake, message, "\nHot whole or half (no slices):")
+    message = Regex.replace(~r/\*\*\*/, message, "\n")
+    message = Regex.replace(~r/we sell out/, message, "sold out")
+    [boilerplate, topping] = String.split(message, ~r/\n\n\n/)
+    "#{topping}.\n\n#{boilerplate}."
+  end
+
   # TODO: update the return signature to include salad somehow
   # and then restore the salad tweets.
-  
   def fetch_dates_and_topping do
     html = HTTPoison.get!(
       "https://cheeseboardcollective.coop/pizza/"
@@ -82,55 +97,6 @@ defmodule TodaysPizza do
 
   def cheeseboard_url do
     "https://cheeseboardcollective.coop/pizza/"
-  end
-
-  # Pizza entries may be a garbled mass of HTML
-  # so use this to pull out what we want.
-  def only_pizza("***" <> _junk) do
-    ""
-  end
-  def only_pizza("" <> topping) do
-    topping
-  end
-  def only_pizza({_tag, _junk, ["" <> topping]}) do
-    topping
-  end
-  def only_pizza({_tag, _junk, []}) do
-    ""
-  end
-  def only_pizza({_tag, _junk, [not_junk]}) do
-    only_pizza(not_junk)
-  end
-
-  # NOTE: This function will break when they next change the site.
-  # Not much we can do about it until it happens.
-  def extract_dates_and_toppings([date, pizza]) do
-    # Expected format:
-    # [
-    #  {"p", [],
-    #    ["Wed Jun 24"]
-    #  },
-    #  {"p", [],
-    #    [
-    #      "***This week we are offering partially baked pizzas to finish cooking at home. There are limited vegan, gluten-free friendly, and vegan+gluten-free friendly pizzas available also***",
-    #      {"br", [], []},
-    #      "some text"
-    #      {"b", [], ["bold text"]},
-    #      " Artichoke, kalamata olive, fresh ricotta made in Berkeley by Belfiore, mozzarella cheese, and house made tomato sauce"
-    #    ]
-    #  }
-    # ]
-    # => ["Wed Jun 24", "Artichoke, kalamata olive, ..."]
-    [
-      elem(date, 2)
-      |> List.last()
-      |> String.trim(),
-
-      elem(pizza, 2)
-      |> Enum.map(&only_pizza(&1))
-      |> List.flatten
-      |> Enum.join("")
-    ]
   end
 
   # We likely won't need this static test data very often
