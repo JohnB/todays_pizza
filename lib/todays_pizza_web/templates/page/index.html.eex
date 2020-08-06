@@ -6,7 +6,12 @@
   </a>
 </p>
 <p>
-  TODAY: <b><%= TodaysPizza.pizza_message() %></b>
+  TODAY:
+  <b>
+    <%= for line <- TodaysPizza.pizza_message_lines() do %>
+      <br /><%= line %>
+    <% end %>
+  </b>
 </p>
 <p>
   They will be tweeted once a day by

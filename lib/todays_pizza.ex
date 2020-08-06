@@ -9,8 +9,8 @@ defmodule TodaysPizza do
 
   # Since the followers all know the drill, just
   # cut to the chase for whatever boilerplate.
-  @partial_bake ~r/\*\*\*We will have partially baked pizzas available at the bakery from/
-  @full_bake ~r/Hot whole and half pizza \(no slices yet\), will be available at the pizzeria from/
+  @partial_bake ~r/\*\*\*We will have partially baked pizzas available at the bakery from 9 a.m. to 4 p.m. or until we sell out./
+  @full_bake ~r/Hot whole and half pizza \(no slices yet\) will be available at the pizzeria from 5 p.m. to 8 p.m or until we sell out/
 
   # This function is called by the Heroku scheduler (sorta cron).
   # Set this value in the Heroku scheduler UI
@@ -26,11 +26,17 @@ defmodule TodaysPizza do
 
     try do
       ExTwitter.update(pizza_message())
-    catch
-      err -> ExTwitter.update("d @JohnB caught #{err}.")
     rescue
       _ -> ExTwitter.update("d @JohnB - something broke and needed rescuing.")
+    catch
+      err -> ExTwitter.update("d @JohnB caught #{err}.")
     end
+  end
+
+  def pizza_message_lines do
+    pizza_message()
+    |> String.split("\n")
+    |> Enum.map(fn line -> String.trim(line) end)
   end
 
   def pizza_message do
@@ -44,7 +50,7 @@ defmodule TodaysPizza do
     todays_pizza =
       fetch_dates_and_topping()
       |> Enum.find(fn [date, _message] ->
-        IO.inspect([date, _message])
+        #IO.inspect([date, _message])
         date == dow_mon_day
       end)
 
@@ -56,12 +62,16 @@ defmodule TodaysPizza do
   end
 
   def trimmed_message(message) do
-    message = Regex.replace(@partial_bake, message, "Partially baked:")
-    message = Regex.replace(@full_bake, message, "\nHot whole or half (no slices):")
+    message = Regex.replace(@partial_bake, message,
+      "Partially baked: 9 to 4 or until sold out.")
+    message = Regex.replace(@full_bake, message,
+      "\nHot whole or half (no slices): 5 to 8 or until sold out")
     message = Regex.replace(~r/\*\*\*/, message, "\n")
     message = Regex.replace(~r/we sell out/, message, "sold out")
     [boilerplate, topping] = String.split(message, ~r/\n\n\n/)
+
     "#{topping}.\n\n#{boilerplate}."
+    |> String.slice(1, 279) # only 280 chars max
   end
 
   # TODO: update the return signature to include salad somehow
@@ -75,11 +85,11 @@ defmodule TodaysPizza do
     pizza_articles = Floki.find(document, ".pizza-list") |>
       Floki.find("article")
 
-    pizza_article = List.first(pizza_articles)
+    #pizza_article = List.first(pizza_articles)
     Enum.map(pizza_articles, fn pizza_article ->
       date = Floki.find(pizza_article, "div.date") |> Floki.text()
       menu = Floki.find(pizza_article, "div.menu")
-      titles = Floki.find(menu, "h3")
+      _titles = Floki.find(menu, "h3")
       topping_and_salad = Floki.find(menu, "p")
       topping = topping_and_salad |> List.first |> Floki.text
       #salad = topping_and_salad |> List.first |> Floki.text
