@@ -55,7 +55,7 @@ defmodule TodaysPizza do
       end)
 
     case todays_pizza do
-      nil -> "#{dow_mon_day}: So very sad. No pizza today."
+      nil -> "#{dow_mon_day}: Très désolé. No pizza today."
       [_, message] -> "#{dow_mon_day}: #{trimmed_message(message)}"
       _ -> "d @JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
     end
@@ -71,7 +71,7 @@ defmodule TodaysPizza do
     [boilerplate, topping] = String.split(message, ~r/\n\n\n/)
 
     "#{topping}.\n\n#{boilerplate}."
-    |> String.slice(1, 279) # only 280 chars max
+    |> String.slice(0, 279) # only 280 chars max
   end
 
   # TODO: update the return signature to include salad somehow
