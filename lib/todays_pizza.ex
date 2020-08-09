@@ -71,7 +71,7 @@ defmodule TodaysPizza do
     [boilerplate, topping] = String.split(message, ~r/\n\n\n/)
 
     "#{topping}.\n\n#{boilerplate}."
-    |> String.slice(0, 279) # only 280 chars max
+    |> String.slice(0, 278) # only 280 chars max
   end
 
   # TODO: update the return signature to include salad somehow
