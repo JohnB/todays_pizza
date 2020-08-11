@@ -27,9 +27,9 @@ defmodule TodaysPizza do
     try do
       ExTwitter.update(pizza_message())
     rescue
-      _ -> ExTwitter.update("d @JohnB - something broke and needed rescuing.")
+      _ -> ExTwitter.update("@JohnB - something broke and needed rescuing.")
     catch
-      err -> ExTwitter.update("d @JohnB caught #{err}.")
+      err -> ExTwitter.update("@JohnB caught #{err}.")
     end
   end
 
@@ -57,7 +57,7 @@ defmodule TodaysPizza do
     case todays_pizza do
       nil -> "#{dow_mon_day}: Très désolé. No pizza today."
       [_, message] -> "#{dow_mon_day}: #{trimmed_message(message) }" |> String.slice(0, 278)
-      _ -> "d @JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
+      _ -> "@JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
     end
   end
 
