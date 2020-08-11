@@ -10,7 +10,7 @@ defmodule TodaysPizza do
   # Since the followers all know the drill, just
   # cut to the chase for whatever boilerplate.
   @partial_bake ~r/\*\*\*We will have partially baked pizzas available at the bakery from 9 a.m. to 4 p.m. or until we sell out./
-  @full_bake ~r/Hot whole and half pizza \(no slices yet\) will be available at the pizzeria from 5 p.m. to 8 p.m or until we sell out/
+  @full_bake ~r/Hot whole and half pizza \(no slices yet\), will be available at the pizzeria from 5 p.m. to 8 p.m. or until we sell out/
 
   # This function is called by the Heroku scheduler (sorta cron).
   # Set this value in the Heroku scheduler UI
@@ -56,7 +56,7 @@ defmodule TodaysPizza do
 
     case todays_pizza do
       nil -> "#{dow_mon_day}: Très désolé. No pizza today."
-      [_, message] -> "#{dow_mon_day}: #{trimmed_message(message)}"
+      [_, message] -> "#{dow_mon_day}: #{trimmed_message(message) }" |> String.slice(0, 278)
       _ -> "d @JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
     end
   end
