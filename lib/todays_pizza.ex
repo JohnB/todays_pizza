@@ -75,7 +75,7 @@ defmodule TodaysPizza do
     message = Regex.replace(~r/the /i, message, "")
     [boilerplate, topping] = String.split(message, ~r/\n\n+/)
 
-    "#{topping}.\n\n#{boilerplate}."
+    "#{topping}.\n\n#{boilerplate}"
     |> String.slice(0, 278) # only 280 chars max
   end
 
