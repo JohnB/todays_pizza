@@ -6,12 +6,6 @@ defmodule TodaysPizza do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
-
-  # Since the followers all know the drill, just
-  # cut to the chase for whatever boilerplate.
-  @partial_bake ~r/\*\*\*We will have partially baked pizzas available at the bakery from 9 a.m. to 4 p.m. or until we sell out./
-  @full_bake ~r/Hot whole and half pizza \(no slices yet\),? will be available at the pizzeria from 5 p\.m\. to 8 p\.m.? or until we sell out/
-
   # This function is called by the Heroku scheduler (sorta cron).
   # Set this value in the Heroku scheduler UI
   #   mix run -e 'IO.puts TodaysPizza.tweet_about_pizza'
@@ -61,11 +55,18 @@ defmodule TodaysPizza do
     end
   end
 
+  # Since the followers all know the drill, just
+  # cut to the chase for whatever boilerplate.
+  @partial_bake ~r/\*\*\*.*artially baked pizzas .*available at the bakery from 9 a.m. to 4 p.m.( or until we sell out.)?/
+  @full_bake ~r/Hot whole and half pizza \(no slices yet\),? .* available at the pizzeria from 5 p\.m\. to 8 p\.m.? or until we sell out/
+  @gluten ~r/We have a limited number.*as well/
+
   def trimmed_message(message) do
     message = Regex.replace(@partial_bake, message,
       "Partially baked: 9 to 4 or until sold out.")
     message = Regex.replace(@full_bake, message,
       "\nHot whole or half (no slices): 5 to 8 or until sold out")
+    message = Regex.replace(@gluten, message, "(some gluten/vegan available)")
     message = Regex.replace(~r/\*\*\*/, message, "\n")
     message = Regex.replace(~r/we sell out/, message, "sold out")
     [boilerplate, topping] = String.split(message, ~r/\n\n\n/)
