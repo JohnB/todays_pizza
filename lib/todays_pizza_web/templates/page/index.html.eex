@@ -29,5 +29,10 @@
   <p>
     <b><%= date %></b>:
     <span><%= topping %></span>
+    <br />
+    <i>Tweeted as:</i>
+    <%= for line <- TodaysPizza.each_line(TodaysPizza.trimmed_message(topping, date)) do %>
+      <br /><%= line %>
+    <% end %>
   </p>
 <% end %>

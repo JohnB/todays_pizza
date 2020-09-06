@@ -29,8 +29,7 @@ defmodule TodaysPizza do
 
   def pizza_message_lines do
     pizza_message()
-    |> String.split("\n")
-    |> Enum.map(fn line -> String.trim(line) end)
+    |> each_line()
   end
 
   def pizza_message do
@@ -50,7 +49,7 @@ defmodule TodaysPizza do
 
     case todays_pizza do
       nil -> "#{dow_mon_day}: Très désolé. No pizza today."
-      [_, message] -> "#{dow_mon_day}: #{trimmed_message(message) }" |> String.slice(0, 278)
+      [_, message] -> String.slice("#{dow_mon_day}: #{trimmed_message(message, dow_mon_day) }", 0, 278)
       _ -> "@JohnB Unexpected todays_pizza array: #{inspect(todays_pizza)}."
     end
   end
@@ -61,18 +60,29 @@ defmodule TodaysPizza do
   @full_bake ~r/Hot whole and half pizza \(no slices yet\),? .* available at the pizzeria from 5 p\.m\. to 8 p\.m.? or until we sell out/
   @gluten ~r/We have a limited number.*as well/
 
-  def trimmed_message(message) do
+  def trimmed_message(message, dow_mon_day \\ "") do
+    hot_sellout = String.match?(dow_mon_day, ~r/Sat/) &&
+      "\nHot whole or half (no slices): 5-8 (sold out at 7pm on recent Saturdays)" ||
+      "\nHot whole or half (no slices): 5-8 or until sold out"
+
     message = Regex.replace(@partial_bake, message,
-      "Partially baked: 9 to 4 or until sold out.")
-    message = Regex.replace(@full_bake, message,
-      "\nHot whole or half (no slices): 5 to 8 or until sold out")
+      "Partially baked: 9-4 or until sold out.")
+    message = Regex.replace(@full_bake, message, hot_sellout)
     message = Regex.replace(@gluten, message, "(some gluten/vegan available)")
     message = Regex.replace(~r/\*\*\*/, message, "\n")
     message = Regex.replace(~r/we sell out/, message, "sold out")
-    [boilerplate, topping] = String.split(message, ~r/\n\n\n/)
+    message = Regex.replace(~r/ and /, message, " & ")
+    message = Regex.replace(~r/the /i, message, "")
+    [boilerplate, topping] = String.split(message, ~r/\n\n+/)
 
     "#{topping}.\n\n#{boilerplate}."
     |> String.slice(0, 278) # only 280 chars max
+  end
+
+  def each_line(msg) do
+    msg
+    |> String.split("\n")
+    |> Enum.map(fn line -> String.trim(line) end)
   end
 
   # TODO: update the return signature to include salad somehow
